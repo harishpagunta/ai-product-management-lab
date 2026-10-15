@@ -10,6 +10,8 @@ Northbeam's support team is drowning in inbound tickets, and "let's use AI" has 
 
 This matters because the wrong layer shows up later as a production problem: a GenAI feature deployed where a deterministic rule would have been cheaper and more auditable, or a rules engine stretched past its breaking point where a classifier was needed. Both cost the company credibility with users and with leadership.
 
+The pattern is familiar to anyone who's sat in these rooms: a stakeholder asks for a "smart chatbot" when the actual user problem would be better served by a simple classifier or recommendation step. The request is really "make this feel smarter and more automated" — and untangling what *kind* of smart is the PM's job, not the engineer's afterthought.
+
 ## 2. Product decision
 
 The decision isn't "should we use AI" — it's "which layer of intelligence does this specific job need." A simple framework, scored against the factors that actually change engineering cost and user-facing risk:
@@ -36,6 +38,11 @@ At the level a PM needs to track — not the level an ML engineer needs:
 - **GenAI / LLM:** a prompt plus context sent to a foundation model API, which samples from a learned probability distribution over possible outputs. The same input can produce different outputs across calls (even at low temperature, rarely exactly identical), because the system is generating, not looking up or classifying from a fixed set of categories.
 
 The three sit on a spectrum of *how predictable the output is* and *how that behavior was produced* — not a ladder where GenAI is simply "more advanced." Each is the right tool for a different shape of problem.
+
+**Worked example — a billing dispute ticket.** A customer emails: "I was charged twice, please refund the extra charge."
+- *Deterministic path:* a classifier flags the ticket as a billing dispute → fixed logic checks the billing system for an actual duplicate charge → if confirmed, a defined refund workflow fires. Same input always produces the same output; a QA engineer can write "given a confirmed duplicate charge, assert refund = $X."
+- *Probabilistic path:* an LLM reads the email and generates a reply — it might apologize and promise a refund, ask a clarifying question, or (if context is thin) state a refund amount that doesn't match the real duplicate charge. Run twice, the same email can get two different replies, and there's no single "assert X" test for that — only a measured rate of correct replies across a review sample.
+- *The decision this forces:* the refund determination itself stays deterministic and auditable; GenAI's legitimate role is narrower — drafting the empathetic reply *around* a decision the deterministic system already made. Letting the model both decide the refund and communicate it is the "wrong layer" failure this framework exists to catch.
 
 ## 4. Risks and trade-offs
 
