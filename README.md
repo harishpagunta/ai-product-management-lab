@@ -44,3 +44,5 @@ Every artifact answers five questions: **Problem → Product decision → How th
 ### Published
 
 Artifacts are listed here as they are published.
+
+- [`01-ai-product-foundations/choosing-the-right-intelligence-layer.md`](01-ai-product-foundations/choosing-the-right-intelligence-layer.md) — a decision framework for picking rules engines, classic ML, or GenAI for a given job, illustrated through a support-ticket routing scenario.
