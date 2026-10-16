@@ -29,6 +29,8 @@ For Northbeam's ticket routing specifically: a rules engine handles the top 5 "o
 
 **Rejected approach:** routing every ticket through an LLM classifier from day one. It would have worked, but at higher cost and lower auditability than a rules + classic ML combination for a problem that's 80% closed-set.
 
+One more input belongs in this decision: context-window size. A GenAI feature that needs to read a long document or thread end-to-end (a policy doc, a multi-day escalation) can't just "read it all" — it needs a chunking or retrieval strategy once the material exceeds what fits in one call. That's a scoping decision a PM makes up front, not an engineering detail discovered during implementation.
+
 ## 3. How the system works
 
 At the level a PM needs to track — not the level an ML engineer needs:
@@ -39,6 +41,10 @@ At the level a PM needs to track — not the level an ML engineer needs:
 
 The three sit on a spectrum of *how predictable the output is* and *how that behavior was produced* — not a ladder where GenAI is simply "more advanced." Each is the right tool for a different shape of problem.
 
+**Why GenAI behaves this way, mechanically:** an LLM doesn't look anything up — it reads the prompt as a sequence of *tokens* (sub-word chunks, not words) and generates the next token by sampling from a learned probability distribution, one token at a time. Two settings shape that behavior directly:
+- **Context window** — the total tokens (prompt + any injected context + the reply) a single call can hold. Exceed it and the call truncates or fails; this is why "just read the whole document" isn't always an option.
+- **Temperature** — how much randomness the sampling step allows. Near zero, the model almost always picks the most likely next token (consistent, "safe"); higher, it samples more broadly (varied, occasionally surprising). This is a product-facing setting, not just a model parameter — it's worth specifying deliberately rather than leaving at a default.
+
 **Worked example — a billing dispute ticket.** A customer emails: "I was charged twice, please refund the extra charge."
 - *Deterministic path:* a classifier flags the ticket as a billing dispute → fixed logic checks the billing system for an actual duplicate charge → if confirmed, a defined refund workflow fires. Same input always produces the same output; a QA engineer can write "given a confirmed duplicate charge, assert refund = $X."
 - *Probabilistic path:* an LLM reads the email and generates a reply — it might apologize and promise a refund, ask a clarifying question, or (if context is thin) state a refund amount that doesn't match the real duplicate charge. Run twice, the same email can get two different replies, and there's no single "assert X" test for that — only a measured rate of correct replies across a review sample.
@@ -48,7 +54,7 @@ The three sit on a spectrum of *how predictable the output is* and *how that beh
 
 - **Rules engine:** brittle outside the cases it was written for; every edge case not covered either breaks silently or needs a human to add a new rule, so maintenance cost rises non-linearly with scope.
 - **Classic ML:** needs continuously representative labeled data; silently degrades ("drifts") as real-world patterns shift away from training data, and that drift is invisible without monitoring.
-- **GenAI:** adds non-determinism, hallucination risk, per-call cost, and latency that compounds at scale — quality can't be nailed down to a single "pass/fail" test the way traditional QA expects.
+- **GenAI:** adds non-determinism, hallucination risk, per-call cost, and latency that compounds at scale — quality can't be nailed down to a single "pass/fail" test the way traditional QA expects. Two mechanical risks sit underneath this: context-window truncation (a reply silently cut off mid-thought because the call hit its token cap, distinct from hallucination) and an unset or default temperature (nobody deliberately decided how consistent vs. varied the output should be).
 - **Cross-cutting risk:** choosing GenAI by default when a cheaper, more auditable layer would do raises both cost and governance risk, especially for anything touching billing, compliance, or anything where a wrong answer has real consequences.
 
 Mitigation at Northbeam: keep the rules engine and classifier doing the deterministic, high-volume, closed-set work; reserve GenAI for genuinely open-ended tasks, and always behind human review until its error rate is measured and acceptable for the specific context.
