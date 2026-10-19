@@ -46,3 +46,4 @@ Every artifact answers five questions: **Problem → Product decision → How th
 Artifacts are listed here as they are published.
 
 - [`01-ai-product-foundations/choosing-the-right-intelligence-layer.md`](01-ai-product-foundations/choosing-the-right-intelligence-layer.md) — a decision framework for picking rules engines, classic ML, or GenAI for a given job, illustrated through a support-ticket routing scenario, grounded in the token/context-window/temperature mechanics that explain why GenAI behaves the way it does.
+- [`01-ai-product-foundations/when-not-to-use-genai.md`](01-ai-product-foundations/when-not-to-use-genai.md) — a checklist for when GenAI is technically possible but still the wrong choice, illustrated through a policy-lookup scenario contrasting search/retrieval with a GenAI chat layer.
