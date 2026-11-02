@@ -35,7 +35,7 @@ Every artifact answers five questions: **Problem → Product decision → How th
 | `01-ai-product-foundations/` | Choosing the right intelligence layer, and when not to use GenAI |
 | `02-prompt-context-design/` | Prompt vs context, contextual AI experiences |
 | `03-rag-knowledge-retrieval/` | RAG design, failure modes, retrieval quality |
-| `04-agentic-workflows/` | Workflow vs agent, tool use, recovery, human approval |
+| `04-agentic-workflows/` | Workflow vs agent, tool use, recovery, human approval — learning area, not claimed as production work |
 | `05-ai-evaluation/` | Output evaluation frameworks and scorecards |
 | `06-responsible-ai/` | Enterprise guardrails and human oversight |
 | `07-ai-product-metrics/` | Metrics trees, quality vs cost vs latency |
@@ -55,3 +55,4 @@ Artifacts are listed here as they are published.
 - [`03-rag-knowledge-retrieval/rag-system-design.md`](03-rag-knowledge-retrieval/rag-system-design.md) — why ingestion, freshness, and permissions are separate failure modes from retrieval quality, illustrated by adding permission-aware retrieval and incremental re-indexing as the support-ticket-drafting assistant's policy library expands into HR- and Legal-adjacent documents.
 - [`03-rag-knowledge-retrieval/rag-failure-modes.md`](03-rag-knowledge-retrieval/rag-failure-modes.md) — a six-category failure-mode taxonomy for diagnosing "bad AI answer" reports (retrieval miss, ranking failure, freshness failure, permission failure, grounded-but-wrong generation, context overload), with a triage order for the support-ticket-drafting assistant.
 - [`03-rag-knowledge-retrieval/retrieval-quality-scorecard.md`](03-rag-knowledge-retrieval/retrieval-quality-scorecard.md) — a lightweight weekly scorecard (precision, proxied recall, groundedness) for catching RAG regressions before rep complaints surface them, routed into the failure-mode taxonomy when a metric dips.
+- [`04-agentic-workflows/workflow-vs-agent.md`](04-agentic-workflows/workflow-vs-agent.md) — a decision framework for choosing between normal software, a fixed workflow, and a true agent, illustrated by a routine-credit-eligibility feature that looks agent-like but is better served by a fixed workflow with LLM-powered steps.
